@@ -61,7 +61,7 @@ class BinarySearchTree:
         if left_size > ind and self.left is not None:
             return self.left.select(ind)
         if left_size < ind and self.right is not None:
-            return self.right.select(ind)
+            return self.right.select(ind - left_size - 1)
         return None
 
 
@@ -88,6 +88,19 @@ class BinarySearchTree:
     
     returns the original (top level) tree - allows for easy chaining in tests
     '''
+    def update_size(self):
+        if self.left:
+            left_size = self.left.size
+        else:
+            left_size = 0
+        
+        if self.right:
+            right_size = self.right.size
+        else:
+            right_size = 0
+            
+        self.size = left_size + right_size + 1
+    
     def insert(self, key):
         if self.key is None:
             self.key = key
@@ -99,7 +112,9 @@ class BinarySearchTree:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
             self.right.insert(key)
-        self.calculate_sizes()
+        
+        self.update_size()
+        
         return self
 
     
@@ -126,8 +141,42 @@ class BinarySearchTree:
         /
        11 
     '''
+    
     def rotate(self, direction, child_side):
         # Your code goes here
+        if child_side == "L":
+            child = self.left
+        if child_side == "R":
+            child = self.right
+            
+        if child is None:
+            return self
+        
+        if direction == "L":
+            new_root = child.right
+            if new_root is None:
+                return self
+            child.right = new_root.left
+            new_root.left = child
+            child.update_size()
+            new_root.update_size()
+            
+        if direction == "R":
+            new_root = child.left
+            if new_root is None:
+                return self
+            child.left = new_root.right
+            new_root.right = child
+            child.update_size()
+            new_root.update_size()
+            
+            
+        if child_side == "L":
+            self.left = new_root
+        else:
+            self.right = new_root    
+        
+        self.update_size()
         return self
 
     def print_bst(self):
