@@ -35,8 +35,34 @@ def QuickSelect(arr, i):
 
     # Feel free to use get_random_index(arr) or get_random_int(start_inclusive, end_inclusive)
     # ... see the helper functions below
-    pass
-    return (0, -1)
+    n = len(arr)
+    if n <= 1:
+        return (arr[0])
+    else:
+        p = get_random_int(0, n-1)
+        pivot = arr[p]
+        A_smaller = []
+        A_larger = []
+        A_equal = []
+        
+        for x in arr:
+            if x < pivot:
+                A_smaller.append(x)
+            elif x > pivot:
+                A_larger.append(x)
+            elif x == pivot:
+                A_equal.append(x)
+                
+        n_smaller = len(A_smaller)
+        n_equal = len(A_equal)
+        
+        if i < n_smaller:
+            return QuickSelect(A_smaller, i)
+        elif i >= n_smaller + n_equal:
+            return QuickSelect(A_larger, i - n_smaller - n_equal)
+        else:
+            return A_equal[0]
+
 
 
 '''
@@ -54,8 +80,12 @@ NOTE: This is different from the QuickSelect definition. This function takes in 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
     # ... MergeSort has already been implemented for you (see below)
-    pass
-    return [(0, -1)] * len(query_list)  # replace this line with your return
+    A = MergeSort(arr)
+    x = []
+    for i in query_list:
+        x.append(A[i])
+        
+    return x # replace this line with your return
 
 
 ##################################
@@ -67,7 +97,7 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [1, 1, 1, 1, 1]
+    k = [1, 5, 10, 15, 20]
 
     # Feel free to edit these initial parameters
 
