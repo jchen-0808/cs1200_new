@@ -166,11 +166,29 @@ def bfs_2_coloring(G, precolored_nodes=None):
             return G.colors
     
     # TODO: Complete this function by implementing two-coloring using the colors 0 and 1.
-    # If there is no valid coloring, reset all the colors to None using G.reset_colors()
-    
-    G.reset_colors()
-    return None
+     
+    for start in range(G.N):
+        if G.colors[start] is None:
+            G.colors[start] = 0
+            frontier = [start]
+            for node in frontier:
+                current_color = G.colors[node]
+                next_color = 1 - current_color  # Alternate color
 
+                # Visit all neighbors of the current node
+                for neighbor in G.edges[node]:
+                    if neighbor not in visited:
+                        # Color the neighbor with the alternate color
+                        G.colors[neighbor] = next_color
+                        visited.add(neighbor)
+                        frontier.append(neighbor)  # Add to BFS queue
+                    elif G.colors[neighbor] == current_color:
+                        # If a neighbor has the same color, the graph is not bipartite
+                        G.reset_colors()
+                        return None
+                    
+    # Return the color assignments if no conflicts were found
+    return G.colors
 
 
 '''
@@ -187,8 +205,12 @@ def bfs_2_coloring(G, precolored_nodes=None):
 # If no coloring is possible, resets all of G's colors to None and returns None.
 def iset_bfs_3_coloring(G):
     # TODO: Complete this function.
-
-    G.reset_colors()
+    for iset in get_maximal_isets(G):
+        if bfs_2_coloring(G, iset) is not None:
+            return G.colors
+        else:
+            G.reset_colors()
+    
     return None
 
 # Feel free to add miscellaneous tests below!
