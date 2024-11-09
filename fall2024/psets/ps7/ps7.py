@@ -212,7 +212,19 @@ def sat_3_coloring(G):
     solver = Glucose3()
 
     # TODO: Add the clauses to the solver
+    num = G.N
+    for i in range(num):
+        z = (i+1) * 10
+        
+        solver.add_clause([z, z + 1, z + 2])
 
+    for j, s in enumerate(G.edges):
+        for ele in s:
+            solver.add_clause([- (j+1) * 10, - ((ele+1) * 10)])
+            solver.add_clause([- ((j+1) * 10 + 1), - ((ele+1) * 10 + 1)])
+            solver.add_clause([- ((j+1) * 10 + 2), - ((ele+1) * 10 + 2 )])
+        
+    #solver.add()
     # Attempt to solve, return None if no solution possible
     if not solver.solve():
         G.reset_colors()
@@ -220,9 +232,11 @@ def sat_3_coloring(G):
 
     # Accesses the model in form [-v1, v2, -v3 ...], which denotes v1 = False, v2 = True, v3 = False, etc.
     solution = solver.get_model()
-
     # TODO: If a solution is found, convert it into a coloring and update G.colors
-
+    for s in solution:
+        if s > 0:
+            G.colors[(s//10 - 1)] = s%10
+    
     return G.colors
 
 # Feel free to add miscellaneous tests below!
